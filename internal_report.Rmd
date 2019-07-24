@@ -1,0 +1,394 @@
+---
+title: "Open Access Author Fund Report at Your Library"
+output: pdf_document
+date: "YEAR"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+Report_unique <- read.csv("path/to/yourFile")
+library(tidyverse)
+library(plyr)
+library(knitr)
+library(magrittr)
+library(kableExtra)
+library(treemapify)
+Report_unique <- filter(Report_unique, Period !=2019)
+```
+
+```{r load Report_unique, echo=FALSE}
+Author <- plyr::count(Report_unique$Name)
+Department <- plyr::count(Report_unique$Department)
+```
+
+# Open Access Author Fund
+
+As a leader in open access in Canada, the University of Ottawa has a strong record of supporting open access initiatives.
+
+Since 2010, the Library managed the University’s Open Access Author Fund to support researchers publishing in open access. Over the course of its existence, it funded over `r nrow(Report_unique)` articles by `r nrow(Author)` authors and `r nrow(Department)` departments with money provided by the central administration and substantial additional financial support from the Library’s collections budget. 
+
+This report is a summary of the Open Access Author Fund from 2010 to 2018.
+
+```{r echo=FALSE}
+Author_freq <- plyr::count(Author$freq)
+names(Author_freq) <- c("# of requests by authors", "freq")
+Author_freq %>%
+  kable() %>%
+  kable_styling(full_width = F)
+```
+
+# No. of articles supported per year
+
+```{r echo=FALSE}
+Period <- plyr::count(Report_unique$Period)
+names(Period) <- c("Year", "Freq.")
+Period$Year <- as.character(Period$Year)
+ggplot(data=Period, aes(x=Year, y=Freq., group=1)) + geom_line() + geom_point(size=4, shape=20) + geom_text(aes(label=Freq., vjust=-1), size=3) + theme_classic()
+
+#kable(Period) %>%
+#  kable_styling(bootstrap_options="striped", full_width=FALSE, position="left")
+```
+
+## Year: 2010
+### No. of articles supported by faculty
+
+```{r echo=FALSE}
+Year_2010 <- filter(Report_unique, Period==2010)
+Faculty_2010 <- plyr::count(Year_2010$Faculty)
+names(Faculty_2010) <- c("Faculty", "Freq.")
+
+Faculty_2010 <- Faculty_2010 %>% 
+  arrange(desc(Freq.)) %>% 
+  mutate(percentage = round((Freq./sum(Freq.))*100, 1)) %>%
+  mutate(lab.ypos = cumsum(Freq.) - 0.5*Freq.)
+
+Faculty_2010$Faculty <- factor(Faculty_2010$Faculty, levels=Faculty_2010$Faculty[order(Faculty_2010$Freq.)])
+
+ggplot(Faculty_2010, aes(x="", y=Freq., fill=Faculty)) + geom_bar(width=1, stat="identity", color="white") + coord_polar("y", start=0) + theme_void() + geom_text(aes(y=lab.ypos, label=percentage))
+```
+
+### No. of articles supported by departments
+
+```{r echo=FALSE}
+Department_2010 <- unite(Year_2010, "Fac_Dert", c("Faculty", "Department"))
+
+Department_2010 <- Department_2010 %>%
+  dplyr::count(Fac_Dert) %>%
+  separate(Fac_Dert, c("Faculty", "Department"), sep="_")
+
+ggplot(Department_2010, aes(area=n, fill=Faculty, subgroup=Faculty)) + geom_treemap() +
+  geom_treemap_subgroup_border() + geom_treemap_subgroup_text(color="black", place="centre", grow=T, alpha=0.5, fontface="italic") +
+  geom_treemap_text(aes(label=Department), reflow=T, min.size=2, color="white") + theme(legend.position="none")
+
+```
+
+### No. of publishers 
+
+```{r echo=FALSE}
+Publisher_2010 <- plyr::count(Year_2010$Publisher)
+
+ggplot(Publisher_2010, aes(x=x, y=freq)) + geom_bar(stat="identity", fill="blue") + theme(axis.text.x=element_text(angle=90, vjust=0.5), panel.grid.major=element_blank(), panel.grid.minor=element_blank(), panel.background=element_blank()) 
+
+```
+
+## Year: 2011
+
+### No. of articles supported by faculty
+
+```{r echo=FALSE}
+Year_2011 <- filter(Report_unique, Period==2011)
+Faculty_2011 <- plyr::count(Year_2011$Faculty)
+names(Faculty_2011) <- c("Faculty", "Freq.")
+
+Faculty_2011 <- Faculty_2011 %>% 
+  arrange(desc(Freq.)) %>% 
+  mutate(percentage = round((Freq./sum(Freq.))*100, 1)) %>%
+  mutate(lab.ypos = cumsum(Freq.) - 0.5*Freq.)
+
+Faculty_2011$Faculty <- factor(Faculty_2011$Faculty, levels=Faculty_2011$Faculty[order(Faculty_2011$Freq.)])
+
+ggplot(Faculty_2011, aes(x="", y=Freq., fill=Faculty)) + geom_bar(width=1, stat="identity", color="white") + coord_polar("y", start=0) + theme_void() + geom_text(aes(y=lab.ypos, label=percentage))
+```
+
+### No. of articles supported by departments
+
+```{r echo=FALSE}
+Department_2011 <- unite(Year_2011, "Fac_Dert", c("Faculty", "Department"))
+
+Department_2011 <- Department_2011 %>%
+  dplyr::count(Fac_Dert) %>%
+  separate(Fac_Dert, c("Faculty", "Department"), sep="_")
+
+ggplot(Department_2011, aes(area=n, fill=Faculty, subgroup=Faculty)) + geom_treemap() +
+  geom_treemap_subgroup_border() + geom_treemap_subgroup_text(color="black", place="centre", grow=T, alpha=0.5, fontface="italic") +
+  geom_treemap_text(aes(label=Department), reflow=T, min.size=2, color="white") + theme(legend.position="none")
+
+```
+
+### # of publishers 
+
+```{r echo=FALSE}
+Publisher_2011 <- plyr::count(Year_2011$Publisher)
+
+ggplot(Publisher_2011, aes(x=x, y=freq)) + geom_bar(stat="identity", fill="blue") + theme(axis.text.x=element_text(angle=90, vjust=0.5), panel.grid.major=element_blank(), panel.grid.minor=element_blank(), panel.background=element_blank()) 
+
+```
+
+## Year: 2012
+
+### No. of articles supported by faculty
+
+```{r echo=FALSE}
+Year_2012 <- filter(Report_unique, Period==2012)
+Faculty_2012 <- plyr::count(Year_2012$Faculty)
+names(Faculty_2012) <- c("Faculty", "Freq.")
+
+Faculty_2012 <- Faculty_2012 %>% 
+  arrange(desc(Freq.)) %>% 
+  mutate(percentage = round((Freq./sum(Freq.))*100, 1)) %>%
+  mutate(lab.ypos = cumsum(Freq.) - 0.5*Freq.)
+
+Faculty_2012$Faculty <- factor(Faculty_2012$Faculty, levels=Faculty_2012$Faculty[order(Faculty_2012$Freq.)])
+
+ggplot(Faculty_2012, aes(x="", y=Freq., fill=Faculty)) + geom_bar(width=1, stat="identity", color="white") + coord_polar("y", start=0) + theme_void() + geom_text(aes(y=lab.ypos, label=percentage))
+```
+
+### No. of articles supported by departments
+
+```{r echo=FALSE}
+Department_2012 <- unite(Year_2012, "Fac_Dert", c("Faculty", "Department"))
+
+Department_2012 <- Department_2012 %>%
+  dplyr::count(Fac_Dert) %>%
+  separate(Fac_Dert, c("Faculty", "Department"), sep="_")
+
+ggplot(Department_2012, aes(area=n, fill=Faculty, subgroup=Faculty)) + geom_treemap() +
+  geom_treemap_subgroup_border() + geom_treemap_subgroup_text(color="black", place="centre", grow=T, alpha=0.5, fontface="italic") +
+  geom_treemap_text(aes(label=Department), reflow=T, min.size=2, color="white") + theme(legend.position="none")
+
+```
+
+### No. of publishers 
+
+```{r echo=FALSE}
+Publisher_2012 <- plyr::count(Year_2012$Publisher)
+
+ggplot(Publisher_2012, aes(x=x, y=freq)) + geom_bar(stat="identity", fill="blue") + theme(axis.text.x=element_text(angle=90, vjust=0.5), panel.grid.major=element_blank(), panel.grid.minor=element_blank(), panel.background=element_blank()) 
+
+```
+
+## Year: 2013
+
+### No. of articles supported by faculty
+
+```{r echo=FALSE}
+Year_2013 <- filter(Report_unique, Period==2013)
+Faculty_2013 <- plyr::count(Year_2013$Faculty)
+names(Faculty_2013) <- c("Faculty", "Freq.")
+
+Faculty_2013 <- Faculty_2013 %>% 
+  arrange(desc(Freq.)) %>% 
+  mutate(percentage = round((Freq./sum(Freq.))*100, 1)) %>%
+  mutate(lab.ypos = cumsum(Freq.) - 0.5*Freq.)
+
+Faculty_2013$Faculty <- factor(Faculty_2013$Faculty, levels=Faculty_2013$Faculty[order(Faculty_2013$Freq.)])
+
+ggplot(Faculty_2013, aes(x="", y=Freq., fill=Faculty)) + geom_bar(width=1, stat="identity", color="white") + coord_polar("y", start=0) + theme_void() + geom_text(aes(y=lab.ypos, label=percentage))
+```
+
+### No. of articles supported by departments
+
+```{r echo=FALSE}
+Department_2013 <- unite(Year_2013, "Fac_Dert", c("Faculty", "Department"))
+
+Department_2013 <- Department_2013 %>%
+  dplyr::count(Fac_Dert) %>%
+  separate(Fac_Dert, c("Faculty", "Department"), sep="_")
+
+ggplot(Department_2013, aes(area=n, fill=Faculty, subgroup=Faculty)) + geom_treemap() +
+  geom_treemap_subgroup_border() + geom_treemap_subgroup_text(color="black", place="centre", grow=T, alpha=0.5, fontface="italic") +
+  geom_treemap_text(aes(label=Department), reflow=T, min.size=2, color="white") + theme(legend.position="none")
+
+```
+
+### No. of publishers 
+
+```{r echo=FALSE}
+Publisher_2013 <- plyr::count(Year_2013$Publisher)
+
+ggplot(Publisher_2013, aes(x=x, y=freq)) + geom_bar(stat="identity", fill="blue") + theme(axis.text.x=element_text(angle=90, vjust=0.5), panel.grid.major=element_blank(), panel.grid.minor=element_blank(), panel.background=element_blank()) 
+
+```
+
+## Year: 2014
+
+### No. of articles supported by faculty
+
+```{r echo=FALSE}
+Year_2014 <- filter(Report_unique, Period==2014)
+Faculty_2014 <- plyr::count(Year_2014$Faculty)
+names(Faculty_2014) <- c("Faculty", "Freq.")
+
+Faculty_2014 <- Faculty_2014 %>% 
+  arrange(desc(Freq.)) %>% 
+  mutate(percentage = round((Freq./sum(Freq.))*100, 1)) %>%
+  mutate(lab.ypos = cumsum(Freq.) - 0.5*Freq.)
+
+Faculty_2014$Faculty <- factor(Faculty_2014$Faculty, levels=Faculty_2014$Faculty[order(Faculty_2014$Freq.)])
+
+ggplot(Faculty_2014, aes(x="", y=Freq., fill=Faculty)) + geom_bar(width=1, stat="identity", color="white") + coord_polar("y", start=0) + theme_void() + geom_text(aes(y=lab.ypos, label=percentage))
+```
+
+### No. of articles supported by departments
+
+```{r echo=FALSE}
+Department_2014 <- unite(Year_2014, "Fac_Dert", c("Faculty", "Department"))
+
+Department_2014 <- Department_2014 %>%
+  dplyr::count(Fac_Dert) %>%
+  separate(Fac_Dert, c("Faculty", "Department"), sep="_")
+
+ggplot(Department_2014, aes(area=n, fill=Faculty, subgroup=Faculty)) + geom_treemap() +
+  geom_treemap_subgroup_border() + geom_treemap_subgroup_text(color="black", place="centre", grow=T, alpha=0.5, fontface="italic") +
+  geom_treemap_text(aes(label=Department), reflow=T, min.size=2, color="white") + theme(legend.position="none")
+
+```
+
+### No. of publishers 
+
+```{r echo=FALSE}
+Publisher_2014 <- plyr::count(Year_2014$Publisher)
+
+ggplot(Publisher_2014, aes(x=x, y=freq)) + geom_bar(stat="identity", fill="blue") + theme(axis.text.x=element_text(angle=90, vjust=0.5), panel.grid.major=element_blank(), panel.grid.minor=element_blank(), panel.background=element_blank()) 
+
+```
+
+## Year: 2016
+
+### No. of articles supported by faculty
+
+```{r echo=FALSE}
+Year_2016 <- filter(Report_unique, Period==2016)
+Faculty_2016 <- plyr::count(Year_2016$Faculty)
+names(Faculty_2016) <- c("Faculty", "Freq.")
+
+Faculty_2016 <- Faculty_2016 %>% 
+  arrange(desc(Freq.)) %>% 
+  mutate(percentage = round((Freq./sum(Freq.))*100, 1)) %>%
+  mutate(lab.ypos = cumsum(Freq.) - 0.5*Freq.)
+
+Faculty_2016$Faculty <- factor(Faculty_2016$Faculty, levels=Faculty_2016$Faculty[order(Faculty_2016$Freq.)])
+
+ggplot(Faculty_2016, aes(x="", y=Freq., fill=Faculty)) + geom_bar(width=1, stat="identity", color="white") + coord_polar("y", start=0) + theme_void() + geom_text(aes(y=lab.ypos, label=percentage))
+```
+
+### No. of articles supported by departments
+
+```{r echo=FALSE}
+Department_2016 <- unite(Year_2016, "Fac_Dert", c("Faculty", "Department"))
+
+Department_2016 <- Department_2016 %>%
+  dplyr::count(Fac_Dert) %>%
+  separate(Fac_Dert, c("Faculty", "Department"), sep="_")
+
+ggplot(Department_2016, aes(area=n, fill=Faculty, subgroup=Faculty)) + geom_treemap() +
+  geom_treemap_subgroup_border() + geom_treemap_subgroup_text(color="black", place="centre", grow=T, alpha=0.5, fontface="italic") +
+  geom_treemap_text(aes(label=Department), reflow=T, min.size=2, color="white") + theme(legend.position="none")
+
+```
+
+### No. of publishers 
+
+```{r echo=FALSE}
+Publisher_2016 <- plyr::count(Year_2016$Publisher)
+
+ggplot(Publisher_2016, aes(x=x, y=freq)) + geom_bar(stat="identity", fill="blue") + theme(axis.text.x=element_text(angle=90, vjust=0.5), panel.grid.major=element_blank(), panel.grid.minor=element_blank(), panel.background=element_blank()) 
+
+```
+
+## Year: 2017
+
+### No. of articles supported by faculty
+
+```{r echo=FALSE}
+Year_2017 <- filter(Report_unique, Period==2017)
+Faculty_2017 <- plyr::count(Year_2017$Faculty)
+names(Faculty_2017) <- c("Faculty", "Freq.")
+
+Faculty_2017 <- Faculty_2017 %>% 
+  arrange(desc(Freq.)) %>% 
+  mutate(percentage = round((Freq./sum(Freq.))*100, 1)) %>%
+  mutate(lab.ypos = cumsum(Freq.) - 0.5*Freq.)
+
+Faculty_2017$Faculty <- factor(Faculty_2017$Faculty, levels=Faculty_2017$Faculty[order(Faculty_2017$Freq.)])
+
+ggplot(Faculty_2017, aes(x="", y=Freq., fill=Faculty)) + geom_bar(width=1, stat="identity", color="white") + coord_polar("y", start=0) + theme_void() + geom_text(aes(y=lab.ypos, label=percentage))
+```
+
+### No. of articles supported by departments
+
+```{r echo=FALSE}
+Department_2017 <- unite(Year_2017, "Fac_Dert", c("Faculty", "Department"))
+
+Department_2017 <- Department_2017 %>%
+  dplyr::count(Fac_Dert) %>%
+  separate(Fac_Dert, c("Faculty", "Department"), sep="_")
+
+ggplot(Department_2017, aes(area=n, fill=Faculty, subgroup=Faculty)) + geom_treemap() +
+  geom_treemap_subgroup_border() + geom_treemap_subgroup_text(color="black", place="centre", grow=T, alpha=0.5, fontface="italic") +
+  geom_treemap_text(aes(label=Department), reflow=T, min.size=2, color="white") + theme(legend.position="none")
+
+```
+
+### No. of publishers 
+
+```{r echo=FALSE}
+Publisher_2017 <- plyr::count(Year_2017$Publisher)
+
+ggplot(Publisher_2017, aes(x=x, y=freq)) + geom_bar(stat="identity", fill="blue") + theme(axis.text.x=element_text(angle=90, vjust=0.5), panel.grid.major=element_blank(), panel.grid.minor=element_blank(), panel.background=element_blank()) 
+
+```
+
+
+## Year: 2018
+
+### No. of articles supported by faculty
+
+```{r echo=FALSE}
+Year_2018 <- filter(Report_unique, Period==2018)
+Faculty_2018 <- plyr::count(Year_2018$Faculty)
+names(Faculty_2018) <- c("Faculty", "Freq.")
+
+Faculty_2018 <- Faculty_2018 %>% 
+  arrange(desc(Freq.)) %>% 
+  mutate(percentage = round((Freq./sum(Freq.))*100, 1)) %>%
+  mutate(lab.ypos = cumsum(Freq.) - 0.5*Freq.)
+
+Faculty_2018$Faculty <- factor(Faculty_2018$Faculty, levels=Faculty_2018$Faculty[order(Faculty_2018$Freq.)])
+
+ggplot(Faculty_2018, aes(x="", y=Freq., fill=Faculty)) + geom_bar(width=1, stat="identity", color="white") + coord_polar("y", start=0) + theme_void() + geom_text(aes(y=lab.ypos, label=percentage))
+```
+
+### No. of articles supported by departments
+
+```{r echo=FALSE}
+Department_2018 <- unite(Year_2018, "Fac_Dert", c("Faculty", "Department"))
+
+Department_2018 <- Department_2018 %>%
+  dplyr::count(Fac_Dert) %>%
+  separate(Fac_Dert, c("Faculty", "Department"), sep="_")
+
+ggplot(Department_2018, aes(area=n, fill=Faculty, subgroup=Faculty)) + geom_treemap() +
+  geom_treemap_subgroup_border() + geom_treemap_subgroup_text(color="black", place="centre", grow=T, alpha=0.5, fontface="italic") +
+  geom_treemap_text(aes(label=Department), reflow=T, min.size=2, color="white") + theme(legend.position="none")
+
+```
+
+### No. of publishers 
+
+```{r echo=FALSE}
+Publisher_2018 <- plyr::count(Year_2018$Publisher)
+
+ggplot(Publisher_2018, aes(x=x, y=freq)) + geom_bar(stat="identity", fill="blue") + theme(axis.text.x=element_text(angle=90, vjust=0.5), panel.grid.major=element_blank(), panel.grid.minor=element_blank(), panel.background=element_blank()) 
+
+```
